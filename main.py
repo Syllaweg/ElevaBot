@@ -6,32 +6,48 @@ import speech_recognition as sr
 import pyaudio
 import playsound
 
-def load_data_person(pickle_filename):
-    """
+def load_data_person(pickle_filename) -> dict:
+    """ Charge le fichier .pkl contenant les features des visages déjà vu.
+    
+    Args: 
+        pickle_filename (.pkl): fichier contenant les features des visages enregistrés.
+
+    return:
+        visage_connu (dict): le noms en clefs et 
+                            en valeurs les caractéristiques des visages des personnes déjà connnus
     """
 
     try:
         with open(pickle_filename, "rb") as f:
-            person = pickle.load(f)
+            visage_connu = pickle.load(f)
     except:
         print("error when loading pickle")
 
     else:
         print("data loaded with sucess!")
         
-    return person
+    return visage_connu
 
-def recognize_person(img_fileTest, person):
-    """
+def recognize_person(img_to_recognize, visage_connu) -> str:
+    """ Identifie si la personne est déjà enregistré avec une photo
+        Extrait les visages de l'image et leurs features
+        Comparaison avec les features extraites des features déjà présentes dans la base de données
+    
+    Args:
+        img_to_recognize (numpy.array): image en entrée à analyser
+        visage_connu (dict): les noms, et les features des visages enregistrés.
+    
+    Return:
+        keys (str): le nom de la personne identifiée
     """
 
-    unknown_picture = face_recognition.load_image_file(img_fileTest)
+    unknown_picture = face_recognition.load_image_file(img_to_recognize)
     unknown_face_encoding = face_recognition.face_encodings(unknown_picture)[0]
     
     if len(unknown_face_encoding) > 0:
         unknown_face_encoding = unknown_face_encoding[0]
 
-    for elem in person:
+    for elem in visage_connu:
         
         for keys, features in elem.items():
             print("keys =",keys)
