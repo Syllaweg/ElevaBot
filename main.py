@@ -44,13 +44,13 @@ def recognize_person(img_fileTest, person):
             else:
                 inconnu = "enchanté, c'est la première fois que je vous vois" 
                 audio_inconnu = gTTS(text = inconnu,lang = "fr") 
-                audio_inconnu.save("inconnu.mp3") 
-                playsound.playsound("inconnu.mp3")
+                audio_inconnu.save("data/audio/inconnu.mp3") 
+                playsound.playsound("data/audio/inconnu.mp3")
                 
                 return "je ne connais pas cette personne"
 
 #### Load data from database ####
-person = load_data_person("person_data.pkl")
+person = load_data_person("data/person_data.pkl")
 
 
 print(person)
@@ -80,7 +80,7 @@ def add_personnage(img_file_name):
         new_person[img_file_name.split(".")[0].split("/")[-1]] = features
         person.append(new_person)
         try:
-            with open("person_data.pkl", "wb") as f:
+            with open("data/person_data.pkl", "wb") as f:
                 pickle.dump(person, f)
 
         except:
@@ -92,8 +92,8 @@ def add_personnage(img_file_name):
 
 #### Reconnaissance des images ####
 
-#add_personnage("data/Guillaume.jpeg")
-ret = recognize_person("data/Guillaume.jpeg", person)
+#add_personnage("data/image/Guillaume.jpeg")
+ret = recognize_person("data/image/Guillaume.jpeg", person)
 
 print(ret)
 
@@ -105,12 +105,13 @@ def voice():
     """
     bonjour = "je vous écoute"
     audio_salutation = gTTS(text = bonjour,lang = "fr") 
-    audio_salutation.save("bonjour.mp3") 
-    playsound.playsound("bonjour.mp3")
-
-    r = sr.Recognizer()
+    audio_salutation.save("data/audio/bonjour.mp3") 
+    playsound.playsound("data/audio/bonjour.mp3")
 
     print("Je vous écoute")
+    
+    
+    r = sr.Recognizer()
 
     with sr.Microphone() as source:
 
@@ -125,8 +126,8 @@ def voice():
 
         pas_compris = "pardon , je ne vous ai pas compris" 
         audio_imcompris = gTTS(text = pas_compris,lang = "fr") 
-        audio_imcompris.save("incompréhension.mp3") 
-        playsound.playsound("incompréhension.mp3")
+        audio_imcompris.save("data/audio/incompréhension.mp3") 
+        playsound.playsound("data/audio/incompréhension.mp3")
 
         return "Pardon, je ne vous ai pas compris"
 
@@ -149,11 +150,11 @@ for key, value in intentions.items():
             print(value["reponses"])
 
             tts = gTTS(value["reponses"], lang='fr', slow=False)
-            tts.save("reponse.mp3")
+            tts.save("data/audio/reponse.mp3")
 
             # bloque le reste en attendant la piste soit joué 
             blocking = True
-            playsound.playsound("reponse.mp3", block=blocking)
+            playsound.playsound("data/audio/reponse.mp3", block=blocking)
 
 mots_attendus = []
 
