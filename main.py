@@ -1,9 +1,10 @@
+
 import face_recognition
 import pickle
 from gtts import gTTS
 import speech_recognition as sr
 import pyaudio
-import vlc
+import playsound
 
 def load_data_person(pickle_filename):
     """
@@ -26,6 +27,8 @@ def recognize_person(img_fileTest, person):
 
     unknown_picture = face_recognition.load_image_file(img_fileTest)
     unknown_face_encoding = face_recognition.face_encodings(unknown_picture)[0]
+    
+    print(len(unknown_face_encoding), unknown_picture)
     for elem in person:
         for keys, features in elem.items():
 
@@ -33,14 +36,15 @@ def recognize_person(img_fileTest, person):
             if results[0] == True:
                 return keys
             
-        return "je ne connais pas cette personne ??"
+            return "je ne connais pas cette personne"
 
-################## Load data from database
+#### Load data from database ####
 person = load_data_person("person_data.pkl")
 
 
 print(person)
 # Now we can see the two face encodings are of the same person with `compare_faces`!
+
 
 def add_personnage(img_file_name):
     """ 
@@ -48,14 +52,17 @@ def add_personnage(img_file_name):
     flag_person_exist = False
 
     unknown_picture = face_recognition.load_image_file(img_file_name)
-    features= face_recognition.face_encodings(unknown_picture)[0]
+    features = face_recognition.face_encodings(unknown_picture)[0]
+
+    print(features)
 
     for p in person:
         for k in p.keys(): 
             if img_file_name.split(".")[0].split("/")[-1] == k:
                 flag_person_exist = True
-                print("this person is alread exist") 
+                print("Cette personne est déjà présente dans la base de donnée") 
                 break 
+    
     if not flag_person_exist:
         
         new_person = dict()
@@ -72,9 +79,13 @@ def add_personnage(img_file_name):
             print("data save with success!")
 
 
-add_personnage("my_img_exemples/Kamil.jpeg")
-ret = recognize_person("my_img_exemples/Michel.jpeg", person)
+#### Reconnaissance des images ####
+
+#add_personnage("data/Guillaume.jpeg")
+ret = recognize_person("data/Michel.jpeg", person)
+
 print(ret)
+
 
 # -----------------------------  gTTs  ------------------------------------------- #
 
@@ -90,7 +101,7 @@ def voice():
         #audio= r.adjust_for_ambient_noise(source)
         audio = r.record(source, duration=4)
 
-    print("Fin d'enregistrement")
+    print("Fin d'enregistrement.")
     try: 
         audio_to_txt = r.recognize_google(audio, language="fr-FR")
     except sr.UnknownValueError:
@@ -101,7 +112,7 @@ def voice():
 text_speech = voice()
 print(text_speech)
 
-Salutations = {"keywords":"bonjour,coucou,ça va", "reponses": "bonjour ! que puis-je faire pour vous ?"}
+Salutations = {"keywords":"bonjour,coucou,ça va", "reponses": "bonjour! que puis-je faire pour vous ?"}
 Remerciements = {"keywords":"ciao,au revoir,merci", "reponses": "Merci au revoir"}
 
 
@@ -112,12 +123,12 @@ for key, value in intentions.items():
         if mot in text_speech.lower():
             print(value["reponses"])
 
-            tts= gTTS(value["reponses"], lang='fr', slow=False)
+            tts = gTTS(value["reponses"], lang='fr', slow=False)
             tts.save("reponse.mp3")
 
-            p=vlc.MediaPlayer("reponse.mp3")
-            p.play()
-
+            # bloque le reste en attendant la piste soit joué 
+            blocking = True
+            playsound.playsound("reponse.mp3", block=blocking)
 
 mots_attendus = []
 
