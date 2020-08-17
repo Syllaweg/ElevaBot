@@ -28,15 +28,26 @@ def recognize_person(img_fileTest, person):
     unknown_picture = face_recognition.load_image_file(img_fileTest)
     unknown_face_encoding = face_recognition.face_encodings(unknown_picture)[0]
     
-    print(len(unknown_face_encoding), unknown_picture)
+    if len(unknown_face_encoding) > 0:
+        unknown_face_encoding = unknown_face_encoding[0]
+
     for elem in person:
+        
         for keys, features in elem.items():
+            print("keys =",keys)
+            
 
             results = face_recognition.compare_faces([features], unknown_face_encoding)
             if results[0] == True:
                 return keys
             
-            return "je ne connais pas cette personne"
+            else:
+                inconnu = "enchanté, c'est la première fois que je vous vois" 
+                audio_inconnu = gTTS(text = inconnu,lang = "fr") 
+                audio_inconnu.save("inconnu.mp3") 
+                playsound.playsound("inconnu.mp3")
+                
+                return "je ne connais pas cette personne"
 
 #### Load data from database ####
 person = load_data_person("person_data.pkl")
@@ -60,7 +71,7 @@ def add_personnage(img_file_name):
         for k in p.keys(): 
             if img_file_name.split(".")[0].split("/")[-1] == k:
                 flag_person_exist = True
-                print("Cette personne est déjà présente dans la base de donnée") 
+                print("Cette personne est bien présente dans la base de données") 
                 break 
     
     if not flag_person_exist:
@@ -82,37 +93,51 @@ def add_personnage(img_file_name):
 #### Reconnaissance des images ####
 
 #add_personnage("data/Guillaume.jpeg")
-ret = recognize_person("data/Michel.jpeg", person)
+ret = recognize_person("data/Guillaume.jpeg", person)
 
 print(ret)
 
 
-# -----------------------------  gTTs  ------------------------------------------- #
+# -----------------------------  Partie Sonore  ------------------------------------------ #
 
 def voice():
     """
     """
+    bonjour = "je vous écoute"
+    audio_salutation = gTTS(text = bonjour,lang = "fr") 
+    audio_salutation.save("bonjour.mp3") 
+    playsound.playsound("bonjour.mp3")
 
     r = sr.Recognizer()
 
     print("Je vous écoute")
+
     with sr.Microphone() as source:
 
         #audio= r.adjust_for_ambient_noise(source)
-        audio = r.record(source, duration=4)
+        audio = r.record(source, duration=2)
 
     print("Fin d'enregistrement.")
     try: 
         audio_to_txt = r.recognize_google(audio, language="fr-FR")
+    
     except sr.UnknownValueError:
+
+        pas_compris = "pardon , je ne vous ai pas compris" 
+        audio_imcompris = gTTS(text = pas_compris,lang = "fr") 
+        audio_imcompris.save("incompréhension.mp3") 
+        playsound.playsound("incompréhension.mp3")
+
         return "Pardon, je ne vous ai pas compris"
+
+
     else:
         return audio_to_txt
 
 text_speech = voice()
 print(text_speech)
 
-Salutations = {"keywords":"bonjour,coucou,ça va", "reponses": "bonjour! que puis-je faire pour vous ?"}
+Salutations = {"keywords":"bonjour,coucou,ça va", "reponses": "Que puis-je faire pour vous ?"}
 Remerciements = {"keywords":"ciao,au revoir,merci", "reponses": "Merci au revoir"}
 
 
