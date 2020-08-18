@@ -148,7 +148,7 @@ def add_personnage(img_file_name):
                 print("data save with success!")
 
 
-#### Reconnaissance des images ####
+######  INPUT  ########## Reconnaissance des images #########
 
 #add_personnage("data/image/Sylvere.jpeg")
 ret = recognize_person("data/image/syl2.jpg", person)
@@ -185,8 +185,6 @@ else:
                 # bloque le reste en attendant la piste soit joué 
                 blocking = True
                 playsound.playsound("data/audio/reponse.mp3", block=blocking)
-
-
 
 
 mots_attendus = []
