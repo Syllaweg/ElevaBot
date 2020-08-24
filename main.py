@@ -6,6 +6,7 @@ import speech_recognition as sr
 import pyaudio
 import playsound
 
+
 def load_data_person(pickle_filename) -> dict:
     """ Charge le fichier .pkl contenant les features des visages déjà vu.
     
@@ -70,6 +71,8 @@ person = load_data_person("data/person_data.pkl")
 
 
 print(person)
+
+
 # Now we can see the two face encodings are of the same person with `compare_faces`!
 
 # -----------------------------  Partie Sonore  ------------------------------------------ #
@@ -100,8 +103,8 @@ def voice():
 
         pas_compris = "pardon , je ne vous ai pas compris" 
         audio_imcompris = gTTS(text = pas_compris,lang = "fr") 
-        audio_imcompris.save("data/audio/incompréhension.mp3") 
-        playsound.playsound("data/audio/incompréhension.mp3")
+        audio_imcompris.save("data/audio/incomprehension.mp3") 
+        playsound.playsound("data/audio/incomprehension.mp3")
 
         return "Pardon, je ne vous ai pas compris"
 
@@ -109,8 +112,15 @@ def voice():
     else:
         return audio_to_txt
 
+
 def add_personnage(img_file_name):
-    """ 
+    """ Ajoute les caractéristiques d'une personne dans la base de donnée si celle-ci n'est pas déjà présente.
+    Par son nom ou ses caractéristique (features). 
+    Le nom de la personne est extrait ici à partir du nom de l'image transmise pour l'enregistrer.
+
+    Args: 
+        img_file_name (numpy.array & str): image de la personne à rentrer dans la base de donnée, et si la personne n'est pas déjà présente, 
+                                        On prend son nom dans le str du nom de l'image, l'image doit être nommé du nom de la personne
     """
     flag_person_exist = False
 
@@ -151,7 +161,7 @@ def add_personnage(img_file_name):
 ######  INPUT  ########## Reconnaissance des images #########
 
 #add_personnage("data/image/Sylvere.jpeg")
-ret = recognize_person("data/image/syl2.jpg", person)
+ret = recognize_person("data/image/syl2.jpeg", person)
 
 print(ret)
 
