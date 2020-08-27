@@ -122,6 +122,7 @@ def add_personnage(img_file_name):
         img_file_name (numpy.array & str): image de la personne à rentrer dans la base de donnée, et si la personne n'est pas déjà présente, 
                                         On prend son nom dans le str du nom de l'image, l'image doit être nommé du nom de la personne
     """
+    
     flag_person_exist = False
 
     unknown_picture = face_recognition.load_image_file(img_file_name)
